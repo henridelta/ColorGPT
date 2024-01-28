@@ -30,13 +30,25 @@ class ChatScreenState extends State<ChatScreen> {
   @override
   void initState() {
     super.initState();
-    loadColors(); // Appeler la fonction pour charger les couleurs depuis le JSON
+    loadColors('base'); // Appeler la fonction pour charger les couleurs depuis le JSON
   }
 
-  void loadColors() {
+  void loadColors(String theme) {
     // Charger les données JSON depuis votre fichier ou une source distante
-    String jsonContent =
-        '[{"color":"FF0000FF"},{"color":"4CAF50FF"},{"color":"0000FF"},{"color":"FFFF00"},{"color":"FFA500"},{"color":"800080"}]';
+    String jsonContent = '';
+
+    // Choisir le thème en fonction du paramètre
+    if (theme == 'Noel') {
+      jsonContent =
+      '[{"color":"FFFF2222"},{"color":"FF006400"},{"color":"FFFFD700"},{"color":"FFFFEB3B"},{"color":"FFFF69B4"},{"color":"FF87CEEB"}]';
+    } else if (theme == 'Halloween') {
+      jsonContent =
+      '[{"color":"FF000000"},{"color":"FFFF5722"},{"color":"FFC62828"},{"color":"FFFFEB3B"},{"color":"FF2196F3"},{"color":"FF9C27B0"}]';
+    } else if (theme == 'base') {
+      jsonContent =
+      '[{"color":"FFFF0000"},{"color":"FF4CAF50"},{"color":"FFFF9800"},{"color":"FFFFEB3B"},{"color":"FF2196F3"},{"color":"FF9C27B0"}]';
+    }
+
     List<ColorData> colorDataList = (json.decode(jsonContent) as List<dynamic>)
         .map((data) => ColorData.fromJson(data))
         .toList();
@@ -45,9 +57,13 @@ class ChatScreenState extends State<ChatScreen> {
     cellColors = colorDataList
         .map((colorData) => Color(int.parse("0x${colorData.color}")))
         .toList();
+
     // Mettre à jour l'état pour déclencher le redessinement du widget
     setState(() {});
   }
+
+
+
 
   void _sendMessage(String message) async {
     // Replace 'YOUR_CHATGPT_API_ENDPOINT' with the actual ChatGPT API endpoint
@@ -56,7 +72,7 @@ class ChatScreenState extends State<ChatScreen> {
       headers: {
         'Content-Type': 'application/json',
         'Authorization':
-            'Bearer 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',
+            '!!! API KEY !!!',
       },
       body:
           '{"model":"gpt-3.5-turbo","messages": [{"role": "user", "content": "$message"}]}',
@@ -76,14 +92,6 @@ class ChatScreenState extends State<ChatScreen> {
 
   @override
   Widget build(BuildContext context) {
-    List<Color> cellColors = [
-      Color(0xFFFF0000),
-      Colors.green,
-      Colors.yellow,
-      Colors.blue,
-      Colors.orange,
-      Colors.purple,
-    ];
 
     return Scaffold(
       appBar: AppBar(
@@ -101,6 +109,37 @@ class ChatScreenState extends State<ChatScreen> {
               },
             ),
           ),
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: <Widget>[
+                Expanded(
+                  child: ElevatedButton(
+                    onPressed: () {
+                      loadColors('Noel'); // Charger le thème "Noël"
+                    },
+                    child: Builder(builder: (context) {
+                      return const Text('Noël');
+                    }),
+                  ),
+                ),
+                SizedBox(width: 8.0), // Espace entre les boutons
+                Expanded(
+                  child: ElevatedButton(
+                    onPressed: () {
+                      loadColors('Halloween'); // Charger le thème "Noël"
+                    },
+                    child: Builder(builder: (context) {
+                      return const Text('Halloween');
+                    }),
+                  ),
+                ),
+              ],
+            ),
+          ),
+
+
           Expanded(
             child: GridView.builder(
               gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
